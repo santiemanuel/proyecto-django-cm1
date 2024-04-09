@@ -16,7 +16,7 @@
             <p class="students">{{ curso.num_estudiantes }} estudiantes inscritos</p>
             <p class="duration">Duración del curso: {{ curso.duracion }}</p>
             <p class="price-detail">${{ curso.precio }}</p>
-            <a href="#" class="enroll-now">Inscribirse Ahora</a>
+            <a href="{% url 'inscribir_alumno' curso.id %}" class="enroll-now">Inscribirse Ahora</a>
         </div>
     </div>
     <div class="course-description">
@@ -36,7 +36,10 @@
             <p>No hay información disponible.</p>
         {% endif %}
     </div>
-    <div>
+    <div class="d-flex justify-content-end">
         <a href="{% url 'home' %}" class="cta-button">Regresar</a>
+        <a href="{% url 'curso_update' curso.id %}" class="cta-button ms-3">Actualizar Curso</a>
+        <a href="{% url 'curso_delete' curso.id %}" class="cta-button ms-3">Eliminar Curso</a>
+        <a href="{% url 'curso_archive' curso.id %}" class="cta-button ms-3">Archivar Curso</a>
     </div>
 {% endblock %}

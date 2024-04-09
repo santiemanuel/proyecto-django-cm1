@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from .models import Curso, Inscripcion
+from .models import Curso, Inscripcion, Estudiante
 from datetime import date
+from .forms.curso_form import CursoForm
+from django.shortcuts import redirect
+import random
 
 
 def curso_list(request):
-    cursos = Curso.objects.select_related("categoria")
+    cursos = Curso.objects.select_related("categoria").filter(estado="publicado")
     cursos_data = []
     for curso in cursos:
         curso_data = {
@@ -22,6 +25,23 @@ def curso_list(request):
     template = "cursos/curso_list.html"
     context = {"cursos": cursos_data}
     return render(request, template_name=template, context=context)
+
+
+def curso_list_archive(request):
+    cursos = Curso.objects.select_related("categoria").filter(estado="archivado")
+    cursos_data = []
+    for curso in cursos:
+        curso_data = {
+            "id": curso.id,
+            "nombre": curso.nombre,
+            "descripcion": curso.descripcion,
+            "categoria": curso.categoria.nombre,
+            "imagen": f"img/{curso.categoria.color}.png",
+        }
+        cursos_data.append(curso_data)
+
+    context = {"cursos": cursos_data}
+    return render(request, "cursos/curso_list_archive.html", context=context)
 
 
 def curso_detail(request, curso_id):
@@ -83,3 +103,64 @@ def home(request):
     }
     template = "cursos/home.html"
     return render(request, template_name=template, context=context)
+
+
+def curso_create(request):
+    if request.method == "POST":
+        form = CursoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("curso_list")
+    else:
+        form = CursoForm()
+
+    context = {"titulo": "Nuevo Curso", "form": form, "submit": "Crear Curso"}
+    # Cambiar plantilla a curso_form_bs.html para ver la versión personalizada de Bootstrap
+    return render(request, "cursos/curso_form_bs.html", context)
+
+
+def curso_update(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+    if request.method == "POST":
+        form = CursoForm(request.POST, instance=curso)
+        if form.is_valid():
+            form.save()
+            return redirect("curso_list")
+    else:
+        form = CursoForm(instance=curso)
+
+    context = {"titulo": "Editar Curso", "form": form, "submit": "Actualizar Curso"}
+    # Cambiar plantilla a curso_form_bs.html para ver la versión personalizada de Bootstrap
+    return render(request, "cursos/curso_form_bs.html", context)
+
+
+def curso_delete(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+    curso.delete()
+    return redirect("curso_list")
+
+
+def curso_archive(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+    curso.estado = "archivado"
+    curso.save()
+    return redirect("curso_list")
+
+
+def curso_restore(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+    curso.estado = "publicado"
+    curso.save()
+    return redirect("curso_list_archive")
+
+
+def inscribir_alumno(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+    estudiantes_disponibles = Estudiante.objects.exclude(inscripcion__curso=curso)
+    if estudiantes_disponibles.count() == 0:
+        print("No hay alumnos que no cursen este curso")
+        return redirect("curso_detail", curso_id=curso_id)
+    alumno_a_inscribir = random.choice(estudiantes_disponibles)
+    inscripcion = Inscripcion(estudiante=alumno_a_inscribir, curso=curso)
+    inscripcion.save()
+    return redirect("curso_detail", curso_id=curso_id)

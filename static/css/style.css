@@ -17,9 +17,9 @@ header {
 nav ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 nav ul li {
@@ -146,4 +146,24 @@ footer {
 
 .cta-button:hover {
   background-color: #1e184c;
+}
+
+.navbar-button {
+  display: inline-block;
+  background-color: #2b2065;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.navbar-button:hover {
+  color: #fff;
+  background-color: #1e184c;
+}
+
+button {
+  border: none;
 }
