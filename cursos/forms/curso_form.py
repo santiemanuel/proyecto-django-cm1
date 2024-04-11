@@ -16,6 +16,7 @@ class CursoForm(ModelForm):
             "duracion",
             "destacado",
             "estado",
+            "imagen",
         ]
         labels = {
             "nombre": "Nombre del curso",
@@ -27,6 +28,7 @@ class CursoForm(ModelForm):
             "duracion": "Duración",
             "destacado": "Destacado",
             "estado": "Estado",
+            "imagen": "Imagen del curso",
         }
         help_texts = {
             "duracion": "La duración de la clase está definida en horas/minutos/segundos",

@@ -19,7 +19,7 @@ def curso_list(request):
             "categoria": curso.categoria.nombre,
             "duracion": curso.duracion,
             "num_estudiantes": curso.estudiantes.count(),
-            "imagen": f"img/{curso.categoria.color}.png",
+            "imagen": curso.imagen.url,
         }
         cursos_data.append(curso_data)
     template = "cursos/curso_list.html"
@@ -36,7 +36,7 @@ def curso_list_archive(request):
             "nombre": curso.nombre,
             "descripcion": curso.descripcion,
             "categoria": curso.categoria.nombre,
-            "imagen": f"img/{curso.categoria.color}.png",
+            "imagen": curso.imagen.url,
         }
         cursos_data.append(curso_data)
 
@@ -53,7 +53,7 @@ def curso_detail(request, curso_id):
 
     imagen_instructor = None
     if curso.instructor is not None:
-        imagen_instructor = f'img/{curso.instructor.nombre.split(" ")[0]}.png'
+        imagen_instructor = curso.instructor.avatar.url
 
     curso_data = {
         "id": curso.id,
@@ -64,7 +64,7 @@ def curso_detail(request, curso_id):
         "categoria": curso.categoria.nombre,
         "duracion": curso.duracion,
         "num_estudiantes": curso.estudiantes.count(),
-        "imagen": f"img/{curso.categoria.color}.png",
+        "imagen": curso.imagen.url,
         "instructor": curso.instructor,
         "imagen_instructor": imagen_instructor,
     }
@@ -91,7 +91,7 @@ def home(request):
             "id": curso.id,
             "nombre": curso.nombre,
             "descripcion": curso.descripcion,
-            "imagen": f"img/{curso.categoria.color}.png",
+            "imagen": curso.imagen.url,
         }
         cursos_destacados_data.append(curso_data)
 
@@ -107,7 +107,7 @@ def home(request):
 
 def curso_create(request):
     if request.method == "POST":
-        form = CursoForm(request.POST)
+        form = CursoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect("curso_list")
@@ -122,7 +122,7 @@ def curso_create(request):
 def curso_update(request, curso_id):
     curso = Curso.objects.get(id=curso_id)
     if request.method == "POST":
-        form = CursoForm(request.POST, instance=curso)
+        form = CursoForm(request.POST, request.FILES, instance=curso)
         if form.is_valid():
             form.save()
             return redirect("curso_list")
