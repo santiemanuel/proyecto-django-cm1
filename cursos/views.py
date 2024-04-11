@@ -59,6 +59,7 @@ def curso_detail(request, curso_id):
         "id": curso.id,
         "nombre": curso.nombre,
         "descripcion": curso.descripcion,
+        "contenido": curso.contenido,
         "precio": curso.precio,
         "fecha_publicacion": curso.fecha_publicacion,
         "categoria": curso.categoria.nombre,
@@ -131,7 +132,7 @@ def curso_update(request, curso_id):
 
     context = {"titulo": "Editar Curso", "form": form, "submit": "Actualizar Curso"}
     # Cambiar plantilla a curso_form_bs.html para ver la versión personalizada de Bootstrap
-    return render(request, "cursos/curso_form_bs.html", context)
+    return render(request, "cursos/curso_form.html", context)
 
 
 def curso_delete(request, curso_id):
