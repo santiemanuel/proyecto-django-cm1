@@ -9,7 +9,7 @@
     <div class="course-info">
         <img height="100%"
              width="100%"
-             src="{% static curso.imagen %}"
+             src="{{ curso.imagen }}"
              alt="{{ curso.nombre }}">
         <div class="course-details">
             <p class="category">{{ curso.categoria.nombre }}</p>
@@ -28,7 +28,7 @@
         {% if curso.instructor %}
             <img height="100%"
                  width="100%"
-                 src="{% static curso.imagen_instructor %}"
+                 src="{{ curso.imagen_instructor }}"
                  alt="{{ curso.instructor.nombre }}">
             <p>{{ curso.instructor.nombre }}</p>
             <p>{{ curso.instructor.bio }}</p>

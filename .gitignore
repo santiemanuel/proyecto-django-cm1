@@ -88,3 +88,13 @@ local_settings.py
 
 .env
 db.sqlite3
+
+### Static files
+staticfiles/
+
+media/cursos/*
+media/estudiantes/*
+media/instructores/*
+!media/cursos/fallback.png
+!media/estudiantes/fallback.png
+!media/instructores/fallback.png
