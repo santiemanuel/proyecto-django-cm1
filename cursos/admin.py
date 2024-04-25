@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Curso, Categoria, Instructor, Estudiante, Inscripcion
+from .models import Curso, Categoria, Instructor, Estudiante, Inscripcion, CustomUser
 from tinymce.widgets import TinyMCE
 from django.db import models
 
@@ -58,3 +58,4 @@ class EstudianteAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Inscripcion)
+admin.site.register(CustomUser)

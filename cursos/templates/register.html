@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+
+<form method="post" class="form">
+    {% csrf_token %}
+    <div class="">
+        <div class="">
+            <div class="">Información Personal</div>
+            <div class="">
+                <label>{{ form.first_name.label }}</label>
+                {{ form.first_name }}
+            </div>
+            <div class="">
+                <label>{{ form.last_name.label }}</label>
+                {{ form.last_name }}
+            </div>
+            <div class="">
+                <label>{{ form.email.label }}</label>
+                {{ form.email }}
+            </div>
+
+        </div>
+    </div>
+    <div class="">
+        <div class="content">
+            <div class="">
+                <label>{{ form.password1.label }}</label>
+                {{ form.password1 }}
+                <span class="helptext">{{ form.password1.help_text }}</span>
+            </div>
+            <div class="">
+                <label>{{ form.password2.label }}</label>
+                {{ form.password2 }}
+                <span class="helptext">{{ form.password2.help_text }}</span>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Registrarse</button>
+</form>
+
+{% endblock %}

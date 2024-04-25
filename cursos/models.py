@@ -3,9 +3,23 @@ from datetime import timedelta
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from tinymce.models import HTMLField
+from django.contrib.auth.models import AbstractUser
+
+
+class CustomUser(AbstractUser):
+    ROLES_CHOICES = [
+        ("estudiante", "Estudiante"),
+        ("instructor", "Instructor"),
+        ("admin", "Administrador"),
+    ]
+    rol = models.CharField(max_length=20, choices=ROLES_CHOICES, default="estudiante")
+
+    def __str__(self):
+        return f"{self.username} - {self.rol}"
 
 
 class Estudiante(models.Model):
+    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     avatar = models.ImageField(
@@ -17,6 +31,7 @@ class Estudiante(models.Model):
 
 
 class Instructor(models.Model):
+    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     bio = models.TextField()
     avatar = models.ImageField(

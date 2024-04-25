@@ -32,5 +32,20 @@ urlpatterns = [
         views.inscribir_alumno,
         name="inscribir_alumno",
     ),
+    path("estudiantes/", views.estudiante_list, name="estudiante_list"),
+    path(
+        "estudiantes/<int:estudiante_id>/",
+        views.estudiante_detail,
+        name="estudiante_detail",
+    ),
+    path("estudiantes/crear/", views.create_estudiante, name="create_estudiante"),
+    path(
+        "estudiantes/<int:usuario_id>/editar",
+        views.update_estudiante,
+        name="update_estudiante",
+    ),
+    path("signup/", views.register, name="signup"),
+    path("login/", views.user_login, name="login"),
+    path("logout/", views.user_logout, name="logout"),
     path("", views.home, name="home"),
 ]

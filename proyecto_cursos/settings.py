@@ -166,3 +166,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "menubar": True,
     "statusbar": True,
 }
+
+AUTH_USER_MODEL = "cursos.CustomUser"
+
+LOGIN_REDIRECT_URL = "home"

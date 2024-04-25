@@ -10,6 +10,21 @@
       <li>
         <a class="navbar-button" href="{% url 'curso_create' %}">Nuevo Curso</a>
       </li>
+      {% if user.is_authenticated %}
+      <li>
+        <a href="{% url 'update_estudiante' user.id %}">Hola {{ user.get_full_name }} </a>
+      </li>
+      <li>
+        <a href="{% url 'logout' %}">Cerrar Sesión</a>
+      </li>
+      {% else %}
+      <li>
+        <a href="{% url 'login' %}">Iniciar Sesión</a>
+      </li>
+      <li>
+        <a href="{% url 'signup' %}">Registrarse</a>
+      </li>
+      {% endif %}
     </ul>
   </nav>
 </header>

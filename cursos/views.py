@@ -2,8 +2,53 @@ from django.shortcuts import render
 from .models import Curso, Inscripcion, Estudiante
 from datetime import date
 from .forms.curso_form import CursoForm
+from .forms.estudiante_form import EstudianteForm
 from django.shortcuts import redirect
 import random
+from .forms.user_form import UserRegisterForm
+from .forms.user_form import UserLoginForm
+from django.contrib.auth import login
+from django.contrib.auth import authenticate
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.shortcuts import get_object_or_404
+
+
+def register(request):
+    if request.method == "POST":
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Crear estudiante
+            Estudiante.objects.create(
+                usuario=user, nombre=user.first_name + user.last_name, email=user.email
+            )
+            login(request, user)
+            return redirect(
+                "home"
+            )  # Redirigir a la página de inicio después del registro
+    else:
+        form = UserRegisterForm()
+    return render(request, "register.html", {"form": form})
+
+
+def user_login(request):
+    if request.method == "POST":
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(
+                    "home"
+                )  # Redirigir a la página de inicio después del inicio de sesión
+            else:
+                messages.error(request, "Nombre de usuario o contraseña incorrectos.")
+    else:
+        form = UserLoginForm()
+    return render(request, "login.html", {"form": form})
 
 
 def curso_list(request):
@@ -25,6 +70,11 @@ def curso_list(request):
     template = "cursos/curso_list.html"
     context = {"cursos": cursos_data}
     return render(request, template_name=template, context=context)
+
+
+def user_logout(request):
+    logout(request)
+    return redirect("home")
 
 
 def curso_list_archive(request):
@@ -101,6 +151,7 @@ def home(request):
         "num_estudiantes": num_estudiantes,
         "proximo_curso": proximo_curso,
         "cursos_destacados": cursos_destacados_data,
+        "user": request.user,
     }
     template = "cursos/home.html"
     return render(request, template_name=template, context=context)
@@ -165,3 +216,58 @@ def inscribir_alumno(request, curso_id):
     inscripcion = Inscripcion(estudiante=alumno_a_inscribir, curso=curso)
     inscripcion.save()
     return redirect("curso_detail", curso_id=curso_id)
+
+
+def estudiante_list(request):
+    estudiantes = Estudiante.objects.all()
+    context = {"estudiantes": estudiantes}
+    template = "estudiante/estudiante_list.html"
+    return render(request, template, context)
+
+
+def estudiante_detail(request, estudiante_id):
+    estudiante = Estudiante.objects.get(id=estudiante_id)
+    inscripciones = estudiante.inscripcion_set.select_related("curso")
+
+    if request.method == "POST":
+        inscripcion_id = request.POST.get("inscripcion_id")
+        inscripcion = get_object_or_404(
+            Inscripcion, id=inscripcion_id, estudiante=estudiante
+        )
+        inscripcion.delete()
+        return redirect("estudiante_detail", estudiante_id=estudiante.id)
+
+    context = {"estudiante": estudiante, "inscripciones": inscripciones}
+
+    return render(request, "estudiante/estudiante_detail.html", context)
+
+
+def create_estudiante(request):
+    if request.method == "POST":
+        form = EstudianteForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("estudiante_list")
+    else:
+        form = EstudianteForm()
+
+    context = {"form": form, "submit": "Crear Estudiante", "titulo": "Nuevo Estudiante"}
+    return render(request, "estudiante/estudiante_form.html", context)
+
+
+def update_estudiante(request, usuario_id):
+    estudiante = Estudiante.objects.get(usuario=usuario_id)
+    if request.method == "POST":
+        form = EstudianteForm(request.POST, request.FILES, instance=estudiante)
+        if form.is_valid():
+            form.save()
+            return redirect("estudiante_list")
+    else:
+        form = EstudianteForm(instance=estudiante)
+
+    context = {
+        "form": form,
+        "submit": "Actualizar Estudiante",
+        "titulo": "Editar Estudiante",
+    }
+    return render(request, "estudiante/estudiante_form.html", context)
